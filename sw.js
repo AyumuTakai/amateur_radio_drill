@@ -1,7 +1,7 @@
 // オフラインでも使えるようにするための Service Worker。
 // 取得済みのファイルはキャッシュから即座に返し、通信できるときは裏で更新する
 // (更新は、次に開いたときに反映される)。
-const CACHE = "morse-practice-v5";
+const CACHE = "morse-practice-v6";
 const FILES = [
   "./",
   "tree.css",
@@ -24,6 +24,7 @@ const FILES = [
   "assets/data-proc.js",
   "assets/data-keisan.js",
   "assets/gen-keisan.js",
+  "assets/calc-pad.js",
   "manifests/index.webmanifest",
   "manifests/tree.webmanifest",
   "manifests/listen.webmanifest",
