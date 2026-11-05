@@ -304,7 +304,7 @@
           const tr = document.createElement("tr");
           [
             ["code", item.c],
-            ["morse", item.morse],
+            ["morse", gap(item.morse)],
             ["meaning", item.m],
             ["exam", evidence(item)],
           ].forEach(([kind, text]) => {
@@ -408,8 +408,10 @@
           return [...fakes, ...base].slice(0, 3);
         }
 
+        // 文字の区切りがわかるように、モールスの文字と文字の間は &nbsp; を2つ入れて表示する
+        const gap = (morse) => morse.replace(/ /g, "\u00a0\u00a0");
         const label = (opt) =>
-          quiz.mode === "code" ? opt.m : quiz.mode === "morse" ? opt.morse : opt.c;
+          quiz.mode === "code" ? opt.m : quiz.mode === "morse" ? gap(opt.morse) : opt.c;
 
         function renderQuestion() {
           const item = quiz.queue[quiz.index];
@@ -448,7 +450,7 @@
             });
           }
           $("detail").textContent =
-            `${item.c} ${item.morse} … ${item.m}` + (inGrade(item) ? `  ${evidence(item)}` : "");
+            `${item.c} ${gap(item.morse)} … ${item.m}` + (inGrade(item) ? `  ${evidence(item)}` : "");
           $("score").textContent = `${quiz.index + 1} / ${quiz.queue.length}  正解 ${quiz.correct}`;
           $("next").hidden = false;
         }
