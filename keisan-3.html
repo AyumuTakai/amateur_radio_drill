@@ -287,6 +287,7 @@
         <div class="btns">
           <button id="calc-check" class="primary" type="button">判定する</button>
           <button id="calc-giveup" type="button">答えを見る</button>
+          <button id="calc-retry" type="button" hidden>再挑戦</button>
           <button id="calc-next" class="primary" type="button" hidden>次の問題</button>
         </div>
         <div id="calc-out"></div>
@@ -654,8 +655,14 @@
           const k = keys[Math.floor(Math.random() * keys.length)];
           st.cur = G().gen[k]();
           st.cur.cat = k;
+          st.retried = false;
+          resetProblem();
+        }
+
+        // 同じ問題を、答えの入力から出し直す(再挑戦は成績・学習記録に入れない)
+        function resetProblem() {
           st.answered = false;
-          $("calc-cat").textContent = G().cats[k];
+          $("calc-cat").textContent = G().cats[st.cur.cat];
           $("calc-q").innerHTML = st.cur.text;
           $("calc-unit").textContent = st.cur.unit;
           $("calc-tol").textContent = st.cur.tolText;
@@ -665,6 +672,7 @@
           $("calc-check").hidden = false;
           $("calc-giveup").hidden = false;
           $("calc-next").hidden = true;
+          $("calc-retry").hidden = true;
           st.input.focus({ preventScroll: true });
         }
 
@@ -676,9 +684,11 @@
         function finish(ok, userVal) {
           const cur = st.cur;
           st.answered = true;
-          st.n++;
-          if (ok) st.ok++;
-          morseStats.record(key(cur.cat), ok); // 学習記録(復習画面に載る)
+          if (!st.retried) {
+            st.n++;
+            if (ok) st.ok++;
+            morseStats.record(key(cur.cat), ok); // 学習記録(復習画面に載る)
+          }
           const out = $("calc-out");
           out.replaceChildren();
           const r = document.createElement("div");
@@ -694,6 +704,7 @@
           $("calc-check").hidden = true;
           $("calc-giveup").hidden = true;
           $("calc-next").hidden = false;
+          $("calc-retry").hidden = false;
           st.input.disabled = true;
           renderStats();
           $("calc-next").focus({ preventScroll: true });
@@ -723,6 +734,10 @@
         $("calc-check").addEventListener("click", check);
         $("calc-giveup").addEventListener("click", () => !st.answered && finish(false, null));
         $("calc-next").addEventListener("click", newProblem);
+        $("calc-retry").addEventListener("click", () => {
+          st.retried = true;
+          resetProblem();
+        });
         // 解答後は Enter で次の問題へ(この画面を開いているときだけ)
         document.addEventListener("keydown", (e) => {
           if (e.key === "Enter" && st.answered && !$("calc-view").hidden && document.activeElement !== $("calc-next")) {

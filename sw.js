@@ -1,7 +1,7 @@
 // オフラインでも使えるようにするための Service Worker。
 // 取得済みのファイルはキャッシュから即座に返し、通信できるときは裏で更新する
 // (更新は、次に開いたときに反映される)。
-const CACHE = "morse-practice-v14";
+const CACHE = "morse-practice-v15";
 const FILES = [
   "./",
   "tree.css",
