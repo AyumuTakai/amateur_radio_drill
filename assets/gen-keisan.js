@@ -257,21 +257,21 @@ var KGEN = (function () {
   return {
     4: {
       label: '4級',
-      intro: '4級の無線工学の計算問題用。オームの法則・電力・合成抵抗・変調度・波長とアンテナ長・変成器・電圧計/電流計の倍率を、電卓なしで解ける数字で出題します。',
+      intro: '4級の無線工学の計算問題用。オームの法則・電力・合成抵抗・変調度・波長とアンテナ長・変成器・電圧計/電流計の倍率を出題します。',
       cats: { ohm: 'オームの法則', pw: '電力', rs: '合成抵抗', lam: '波長・アンテナ長', am: '変調度', tr: '変成器', mt: '測定範囲の拡大' },
       order: ['ohm', 'pw', 'rs', 'lam', 'am', 'tr', 'mt'],
       gen: { ohm: genOhm, pw: genPw4, rs: genRs4, lam: genLam, am: genAm4, tr: genTr, mt: genMt4 },
     },
     3: {
       label: '3級',
-      intro: '3級の無線工学の計算問題用。直流回路・電力・コンデンサ・交流の実効値・変成器・波長・ダイポールアンテナ・変調度・電力効率を、電卓なしで解ける数字で出題します。',
+      intro: '3級の無線工学の計算問題用。直流回路・電力・コンデンサ・交流の実効値・変成器・波長・ダイポールアンテナ・変調度・電力効率を出題します。',
       cats: { dcc: '直流回路', pw: '電力', cap: 'コンデンサ', ac: '交流の値', tr: '変成器', lam: '波長・アンテナ長', ant: 'ダイポールの電力', am: '変調度', eff: '電力効率' },
       order: ['dcc', 'pw', 'cap', 'ac', 'tr', 'lam', 'ant', 'am', 'eff'],
       gen: { dcc: genDcc, pw: genPw3, cap: genCap3, ac: genAc3, tr: genTr, lam: genLam, ant: genAnt, am: genAm3, eff: genEff },
     },
     2: {
       label: '2級',
-      intro: '2級の無線工学A問題の計算用。コンデンサ・直流回路・共振/LR並列・ひずみ率・AM電力・PLL・電力効率・影像周波数・変成器・オシロスコープ・ダイポール・整流を、電卓なしで解ける数字で出題します。',
+      intro: '2級の無線工学A問題の計算用。コンデンサ・直流回路・共振/LR並列・ひずみ率・AM電力・PLL・電力効率・影像周波数・変成器・オシロスコープ・ダイポール・整流を出題します。',
       cats: { cap: 'コンデンサ', dcc: '直流回路', res: '共振・LR並列', dist: 'ひずみ率', am: 'AM電力', pll: 'PLL', eff: '電力効率', img: '影像周波数', tr: 'インピーダンス変換', osc: 'オシロスコープ', ant: 'ダイポールの電力', rect: '電源(整流・変動率)' },
       order: ['cap', 'dcc', 'res', 'dist', 'am', 'pll', 'eff', 'img', 'tr', 'osc', 'ant', 'rect'],
       gen: { cap: genCap2, dcc: genDcc, res: genRes2, dist: genDist2, am: genAm2, pll: genPll2, eff: genEff, img: genImg2, tr: genTr2, osc: genOsc2, ant: genAnt, rect: genRect2 },
