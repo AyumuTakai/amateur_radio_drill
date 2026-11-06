@@ -113,6 +113,40 @@
               min-height: 4em;
       
       }
+      #qcode-view .ex {
+              margin-top: 0.7em;
+              border: 1px solid #ccd;
+              border-radius: 0.5em;
+              background: #fafbfd;
+              padding: 0.5em 0.8em;
+      
+      }
+      #qcode-view .ex h4 {
+              margin: 0 0 0.3em;
+              font-size: 0.85rem;
+              color: #556;
+      
+      }
+      #qcode-view .ex .line {
+              font-family: monospace;
+              font-size: 0.85rem;
+              line-height: 1.6;
+              white-space: pre-wrap;
+              overflow-wrap: anywhere;
+      
+      }
+      #qcode-view .ex .who {
+              font-weight: bold;
+              color: lightslategray;
+      
+      }
+      #qcode-view .ex .note {
+              margin-top: 0.3em;
+              font-size: 0.8rem;
+              line-height: 1.5;
+              color: #555;
+      
+      }
       #qcode-view .score {
               float: right;
               font-size: 0.9rem;
@@ -300,6 +334,33 @@
           QCODES.filter((item) => !listOnlyGrade || inGrade(item)).forEach(addRow);
           $("list-scope").textContent = "表示: " + (listOnlyGrade ? "この級で出たもの" : "すべて");
         }
+        // 通信例(QEXAMPLES)を、運用手順と同じ形で作る
+        function exampleBlock(item) {
+          const e = QEXAMPLES[item.c];
+          if (!e) return null;
+          const box = document.createElement("div");
+          box.className = "ex";
+          const h = document.createElement("h4");
+          h.textContent = `${item.c} の通信例: ${e.t}`;
+          box.appendChild(h);
+          e.l.forEach(([who, text]) => {
+            const row = document.createElement("div");
+            row.className = "line";
+            const w = document.createElement("span");
+            w.className = "who";
+            w.textContent = who + ": ";
+            row.appendChild(w);
+            row.appendChild(document.createTextNode(text));
+            box.appendChild(row);
+          });
+          if (e.n) {
+            const n = document.createElement("div");
+            n.className = "note";
+            n.textContent = e.n;
+            box.appendChild(n);
+          }
+          return box;
+        }
         function addRow(item) {
           const tr = document.createElement("tr");
           [
@@ -319,6 +380,21 @@
           btn.textContent = "▶";
           btn.addEventListener("click", () => morseAudio.play(item.morse));
           play.appendChild(btn);
+          if (QEXAMPLES[item.c]) {
+            const exBtn = document.createElement("button");
+            exBtn.textContent = "例";
+            exBtn.addEventListener("click", () => {
+              if (tr.nextSibling && tr.nextSibling.classList.contains("ex-row")) return tr.nextSibling.remove();
+              const row = document.createElement("tr");
+              row.className = "ex-row";
+              const td = document.createElement("td");
+              td.colSpan = 5;
+              td.appendChild(exampleBlock(item));
+              row.appendChild(td);
+              tr.after(row);
+            });
+            play.appendChild(exBtn);
+          }
           tr.appendChild(play);
           listBody.appendChild(tr);
         }
@@ -451,6 +527,8 @@
           }
           $("detail").textContent =
             `${item.c} ${gap(item.morse)} … ${item.m}` + (inGrade(item) ? `  ${evidence(item)}` : "");
+          const ex = exampleBlock(item);
+          if (ex) $("detail").appendChild(ex);
           $("score").textContent = `${quiz.index + 1} / ${quiz.queue.length}  正解 ${quiz.correct}`;
           $("next").hidden = false;
         }
