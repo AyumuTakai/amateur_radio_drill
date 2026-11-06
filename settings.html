@@ -114,6 +114,12 @@
         <button id="sound-stop">停止</button>
         <span class="note">いまの速度と音程で試し聴きできます。</span>
       </div>
+      <div class="row">
+        <label>更新</label>
+        <button id="update-check">更新を確認</button>
+        <span id="update-status"></span>
+        <span class="note">新しい版があれば、画面の下に「更新する」が出ます。押すと再読み込みして反映します。</span>
+      </div>
     </div>
     <script src="assets/common.js"></script>
     <script>
@@ -127,6 +133,39 @@
       const gapSelect = document.getElementById("gap");
       if (saved.gap) gapSelect.value = saved.gap;
       gapSelect.addEventListener("change", () => morseSettings.save({ gap: gapSelect.value }));
+
+      // 更新の確認(オフライン対応の Service Worker が動いているときだけ)
+      (() => {
+        const btn = document.getElementById("update-check");
+        const status = document.getElementById("update-status");
+        const sw = navigator.serviceWorker;
+        if (!sw) { btn.disabled = true; status.textContent = "この環境では使えません"; return; }
+        const version = () =>
+          new Promise((resolve) => {
+            if (!sw.controller) return resolve("");
+            const ch = new MessageChannel();
+            ch.port1.onmessage = (e) => resolve(String(e.data).replace(/^.*-v/, "v"));
+            sw.controller.postMessage("version", [ch.port2]);
+            setTimeout(() => resolve(""), 1500);
+          });
+        version().then((v) => { if (v) status.textContent = "いまの版: " + v; });
+        btn.addEventListener("click", async () => {
+          status.textContent = "確認しています…";
+          try {
+            const reg = await sw.getRegistration();
+            if (!reg) throw new Error("none");
+            const changed = new Promise((resolve) => {
+              sw.addEventListener("controllerchange", () => resolve(true), { once: true });
+              setTimeout(() => resolve(false), 8000);
+            });
+            await reg.update();
+            if (await changed) status.textContent = "新しい版を取得しました。下の「更新する」を押してください。";
+            else status.textContent = "最新です(" + ((await version()) || "版不明") + ")";
+          } catch (e) {
+            status.textContent = "確認できませんでした(通信を確かめてください)";
+          }
+        });
+      })();
       const rampToggle = document.getElementById("ramp-toggle");
       const showRamp = () => {
         const on = !!morseSettings.load().ramp;

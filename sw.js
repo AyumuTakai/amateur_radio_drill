@@ -1,7 +1,7 @@
 // オフラインでも使えるようにするための Service Worker。
 // 取得済みのファイルはキャッシュから即座に返し、通信できるときは裏で更新する
 // (更新は、次に開いたときに反映される)。
-const CACHE = "morse-practice-v10";
+const CACHE = "morse-practice-v12";
 const FILES = [
   "./",
   "tree.css",
@@ -137,4 +137,9 @@ self.addEventListener("fetch", (event) => {
       return cached || network;
     })
   );
+});
+
+// 設定ページから、いま動いている版を聞かれたときに答える
+self.addEventListener("message", (event) => {
+  if (event.data === "version" && event.ports[0]) event.ports[0].postMessage(CACHE);
 });
