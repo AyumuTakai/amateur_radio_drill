@@ -1,7 +1,7 @@
 // オフラインでも使えるようにするための Service Worker。
 // 取得済みのファイルはキャッシュから即座に返し、通信できるときは裏で更新する
 // (更新は、次に開いたときに反映される)。
-const CACHE = "morse-practice-v7";
+const CACHE = "morse-practice-v8";
 const FILES = [
   "./",
   "tree.css",
@@ -15,6 +15,7 @@ const FILES = [
   "keisan-2.html",
   "keisan-3.html",
   "keisan-4.html",
+  "waterfall.html",
   "review.html",
   "settings.html",
   "assets/common.css",
@@ -35,6 +36,7 @@ const FILES = [
   "manifests/keisan-2.webmanifest",
   "manifests/keisan-3.webmanifest",
   "manifests/keisan-4.webmanifest",
+  "manifests/waterfall.webmanifest",
   "manifests/review.webmanifest",
   "manifests/settings.webmanifest",
   "icons/index-180.png",
@@ -67,6 +69,9 @@ const FILES = [
   "icons/keisan-4-180.png",
   "icons/keisan-4-192.png",
   "icons/keisan-4-512.png",
+  "icons/waterfall-180.png",
+  "icons/waterfall-192.png",
+  "icons/waterfall-512.png",
   "icons/review-180.png",
   "icons/review-192.png",
   "icons/review-512.png",
