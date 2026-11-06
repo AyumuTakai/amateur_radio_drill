@@ -244,6 +244,33 @@ window.morseGradeBar = (container, onChange) => {
 })();
 
 // オフライン対応: Service Worker を登録する(http/https で開いたときだけ)
+// 新しい版が入ったら、画面の下に知らせて、押すと再読み込みして反映する
+// (ホーム画面から開くアプリは開きっぱなしになりやすいので、前面に戻ったときにも更新を確かめる)
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  const hadController = !!navigator.serviceWorker.controller;
+  const notify = () => {
+    if (document.getElementById("update-banner")) return;
+    const bar = document.createElement("div");
+    bar.id = "update-banner";
+    bar.style.cssText =
+      "position:fixed;left:0;right:0;bottom:0;z-index:2000;display:flex;gap:0.8em;align-items:center;justify-content:center;padding:0.7em 1em;background:#334;color:white;font-size:0.95rem;";
+    const msg = document.createElement("span");
+    msg.textContent = "新しい版があります。";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "更新する";
+    btn.style.cssText = "height:auto;font-size:0.95rem;padding:0.4em 1em;margin:0;border-radius:2em;border:0;background:white;color:#334;cursor:pointer;";
+    btn.addEventListener("click", () => location.reload());
+    bar.append(msg, btn);
+    document.body.appendChild(bar);
+  };
+  // 古い版を使っていた状態で、新しい版に切り替わったときだけ知らせる(初回の導入では出さない)
+  navigator.serviceWorker.addEventListener("controllerchange", () => hadController && notify());
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("sw.js").then((reg) => {
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") reg.update().catch(() => {});
+      });
+    }).catch(() => {})
+  );
 }
